@@ -86,3 +86,21 @@ exports.login = async (req, res, next) => {
         payload: user
     })
 }
+exports.getAllUsers = async (req, res, next) => {
+
+
+    const users = await Users.find()
+
+    if (!users)
+        return res.status(404).json({
+            error: {
+                errCode: ERRORS.NOT_FOUND,
+                errMessage: "Users not exists"
+            }
+        })
+
+    return res.status(201).json({
+        message: 'User login successfully',
+        payload: users
+    })
+}
