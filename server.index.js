@@ -22,7 +22,9 @@ mongoose.connect(MONGO_URL, {
 app.use(express.json())
 //routes
 app.get('/', (req, res) => [
-    res.status(200).json("thanks for coming here get access by contact on mail ashwintelmore@gmail.com")
+    res.status(200).json({
+        message: "To get access for APIs. please! contact on ashwintelmore@gmail.com"
+    })
 ])
 app.use('/api', test)
 app.use('/api', Users)
