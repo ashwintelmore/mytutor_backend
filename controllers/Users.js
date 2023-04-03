@@ -1,8 +1,22 @@
 const { ERRORS } = require("../helper/constants");
+const { isEmpty } = require("../helper/helper");
 const Users = require("../models/Users")
+
+
+
 
 exports.register = async (req, res, next) => {
     const { name, email, password } = req.body;
+
+    const isE = isEmpty(name, email, password);
+    if (isE)
+        return res.status(200).json({
+            error: {
+                errCode: ERRORS.ITS_EMPTY,
+                errMessage: "Input Field Should not empty"
+            }
+        });
+
 
     const user = await Users.findOne({ email: email })
     if (user) {
@@ -34,8 +48,20 @@ exports.register = async (req, res, next) => {
         })
     })
 }
+
 exports.login = async (req, res, next) => {
     const { email, password } = req.body;
+
+
+
+    const isE = isEmpty(email, password);
+    if (isE)
+        return res.status(200).json({
+            error: {
+                errCode: ERRORS.ITS_EMPTY,
+                errMessage: "Input Field Should not empty"
+            }
+        });
 
     const user = await Users.findOne({ email: email })
 
