@@ -1,6 +1,8 @@
+const mongoose = require('mongoose');
 const { ERRORS } = require("../helper/constants");
-const { isEmpty } = require("../helper/helper");
+const { isEmpty, isInalidMongoDBid } = require("../helper/helper");
 const Users = require("../models/Users")
+const UserDetails = require("../models/UserDetails")
 
 
 
@@ -10,33 +12,39 @@ exports.register = async (req, res, next) => {
 
     const isE = isEmpty(name, email, password);
     if (isE)
-        return res.status(200).json({
-            error: {
-                errCode: ERRORS.ITS_EMPTY,
-                errMessage: "Input Field Should not empty"
-            }
-        });
+        return res.status(200).json(isE);
 
+    try {
+        const user = await UserDetails.findOne({ email: email })
 
-    const user = await Users.findOne({ email: email })
-    if (user) {
-        return res.status(208).json({
+        if (user) {
+            return res.status(208).json({
+                error: {
+                    errCode: ERRORS.ALREADY_EXIST,
+                    errMessage: "Email id already exists"
+                }
+            })
+        }
+
+    } catch (error) {
+        return res.status(500).json({
             error: {
-                errCode: ERRORS.ALREADY_EXIST,
-                errMessage: "Email id already exists"
+                errCode: ERRORS.SOMETHING_WRONG,
+                errMessage: "Something went wrong"
             }
         })
     }
+
     let data = {
         name, email, password
     }
-    const newUser = new Users(data)
+    const newUser = new UserDetails({ ...data })
 
-    newUser.save().then((someting) => {
-        console.log('someting :>> ', someting);
+    newUser.save().then((responce) => {
+        console.log('responce :>> ', responce);
         res.status(201).json({
             message: 'User created successfully',
-            payload: data
+            payload: responce
         })
     }).catch((err) => {
         console.log('err :>> ', err);
@@ -52,18 +60,11 @@ exports.register = async (req, res, next) => {
 exports.login = async (req, res, next) => {
     const { email, password } = req.body;
 
-
-
     const isE = isEmpty(email, password);
     if (isE)
-        return res.status(200).json({
-            error: {
-                errCode: ERRORS.ITS_EMPTY,
-                errMessage: "Input Field Should not empty"
-            }
-        });
+        return res.status(200).json(isE);
 
-    const user = await Users.findOne({ email: email })
+    const user = await UserDetails.findOne({ email: email })
 
     if (!user)
         return res.status(404).json({
@@ -86,10 +87,11 @@ exports.login = async (req, res, next) => {
         payload: user
     })
 }
+
 exports.getAllUsers = async (req, res, next) => {
 
 
-    const users = await Users.find()
+    const users = await UserDetails.find()
 
     if (!users)
         return res.status(404).json({
@@ -100,7 +102,49 @@ exports.getAllUsers = async (req, res, next) => {
         })
 
     return res.status(201).json({
-        message: 'User login successfully',
+        message: 'Users fetch successfully',
         payload: users
     })
 }
+
+exports.updateUserDetails = async (req, res, next) => {
+    const {
+        id,
+        payload
+    } = req.body;
+
+
+    const isE = isEmpty(id);
+    if (isE)
+        return res.status(200).json(isE);
+
+    const isinvalidId = isInalidMongoDBid(id)
+    if (isinvalidId)
+        return res.status(200).json(isinvalidId)
+
+    return await UserDetails.findByIdAndUpdate(
+        id,
+        { ...payload },
+        { new: true }).then((user) => {
+            if (!user)
+                return res.status(404).json({
+                    error: {
+                        errCode: ERRORS.NOT_FOUND,
+                        errMessage: "Users not exists"
+                    }
+                })
+            return res.status(201).json({
+                message: 'User data updated successfully',
+                payload: user
+            })
+
+        }).catch((err) => {
+            return res.status(404).json({
+                error: {
+                    errCode: ERRORS.SOMETHING_WRONG,
+                    errMessage: "Something went wrong"
+                }
+            })
+        })
+}
+

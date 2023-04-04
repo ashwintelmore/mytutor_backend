@@ -1,5 +1,5 @@
 var express = require('express');
-const { register, login, getAllUsers } = require('../controllers/Users');
+const { register, login, getAllUsers, updateUserDetails } = require('../controllers/Users');
 var router = express.Router();
 
 
@@ -7,4 +7,6 @@ var router = express.Router();
 router.post('/register', register)
 router.post('/login', login)
 router.get('/allUsers', getAllUsers)
+
+router.post('/upadateUserDetails', updateUserDetails)
 module.exports = router;
