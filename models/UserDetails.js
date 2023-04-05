@@ -63,6 +63,10 @@ const slotSchema = new Schema({
 }, { _id: false });
 
 const userDetailsSchema = new Schema({
+    role: {
+        type: String,
+        enum: ['tutor', 'learner', 'admin']
+    },
     name: {
         type: String,
         trim: true,

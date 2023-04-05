@@ -19,6 +19,7 @@ exports.isEmpty = (...args) => {
 
 
 exports.isInalidMongoDBid = (id) => {
+    console.log('mongoose.Types.ObjectId.isValid(id)', mongoose.Types.ObjectId.isValid(id))
     if (mongoose.Types.ObjectId.isValid(id))
         return 0;
     return {

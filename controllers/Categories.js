@@ -8,32 +8,37 @@ exports.createCategory = async (req, res, next) => {
 
     const isE = isEmpty(catName);
     if (isE)
-        return res.status(200).json({
-            error: {
-                errCode: ERRORS.ITS_EMPTY,
-                errMessage: "Input Field Should not empty"
-            }
-        });
+        return res.status(200).json(isE);
 
-
-    const cat = await Categories.findOne({ catName: catName })
-    if (cat) {
-        return res.status(208).json({
+    try {
+        const cat = await Categories.findOne({ catName: { $regex: catName, $options: 'i' } })
+        if (cat) {
+            return res.status(208).json({
+                error: {
+                    errCode: ERRORS.ALREADY_EXIST,
+                    errMessage: "Category name already exists"
+                }
+            })
+        }
+    } catch (error) {
+        return res.status(500).json({
             error: {
-                errCode: ERRORS.ALREADY_EXIST,
-                errMessage: "Category name already exists"
+                errCode: ERRORS.SOMETHING_WRONG,
+                errMessage: "Something went wrong"
             }
         })
     }
+
+
     let data = {
         catName, imgUrl
     }
     const newCat = new Categories(data)
 
-    newCat.save().then((someting) => {
+    newCat.save().then((responce) => {
         res.status(201).json({
             message: 'User created successfully',
-            payload: data
+            payload: responce
         })
     }).catch((err) => {
         console.log('err :>> ', err);

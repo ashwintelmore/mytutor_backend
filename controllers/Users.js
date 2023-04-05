@@ -1,7 +1,5 @@
-const mongoose = require('mongoose');
 const { ERRORS } = require("../helper/constants");
 const { isEmpty, isInalidMongoDBid } = require("../helper/helper");
-const Users = require("../models/Users")
 const UserDetails = require("../models/UserDetails")
 
 
@@ -64,7 +62,7 @@ exports.login = async (req, res, next) => {
     if (isE)
         return res.status(200).json(isE);
 
-    const user = await UserDetails.findOne({ email: email })
+    const user = await UserDetails.findOne({ email: { $regex: email, $options: 'i' } })
 
     if (!user)
         return res.status(404).json({
@@ -90,21 +88,30 @@ exports.login = async (req, res, next) => {
 
 exports.getAllUsers = async (req, res, next) => {
 
+    try {
+        const users = await UserDetails.find()
 
-    const users = await UserDetails.find()
+        if (!users)
+            return res.status(404).json({
+                error: {
+                    errCode: ERRORS.NOT_FOUND,
+                    errMessage: "Users not exists"
+                }
+            })
 
-    if (!users)
-        return res.status(404).json({
-            error: {
-                errCode: ERRORS.NOT_FOUND,
-                errMessage: "Users not exists"
-            }
+        return res.status(201).json({
+            message: 'Users fetch successfully',
+            payload: users
         })
 
-    return res.status(201).json({
-        message: 'Users fetch successfully',
-        payload: users
-    })
+    } catch (error) {
+        return res.status(500).json({
+            error: {
+                errCode: ERRORS.SOMETHING_WRONG,
+                errMessage: "Something went wrong"
+            }
+        })
+    }
 }
 
 exports.updateUserDetails = async (req, res, next) => {
