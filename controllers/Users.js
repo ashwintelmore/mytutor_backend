@@ -108,7 +108,7 @@ exports.getAllUsers = async (req, res, next) => {
         return res.status(500).json({
             error: {
                 errCode: ERRORS.SOMETHING_WRONG,
-                errMessage: "Something went wrong"
+                errMessage: error
             }
         })
     }
