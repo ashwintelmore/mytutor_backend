@@ -63,7 +63,7 @@ exports.login = async (req, res, next) => {
         return res.status(200).json(isE);
 
     const user = await UserDetails.findOne({ email: { $regex: email, $options: 'i' } })
-
+    console.log('user :>> ', user);
     if (!user)
         return res.status(404).json({
             error: {
@@ -80,11 +80,13 @@ exports.login = async (req, res, next) => {
             }
         })
 
-    return res.status(201).json({
+    return res.status(200).json({
         message: 'User login successfully',
         payload: user
     })
 }
+
+
 
 exports.getAllUsers = async (req, res, next) => {
 
@@ -114,6 +116,42 @@ exports.getAllUsers = async (req, res, next) => {
     }
 }
 
+exports.getUserData = async (req, res, next) => {
+    const {
+        id
+    } = req.params;
+
+
+    const isE = isEmpty(id);
+    if (isE)
+        return res.status(200).json(isE);
+
+    const isinvalidId = isInalidMongoDBid(id)
+    if (isinvalidId)
+        return res.status(200).json(isinvalidId)
+
+    return await UserDetails.findById(id).then((user) => {
+        if (!user)
+            return res.status(404).json({
+                error: {
+                    errCode: ERRORS.NOT_FOUND,
+                    errMessage: "Users not exists"
+                }
+            })
+        return res.status(201).json({
+            message: 'User data updated successfully',
+            payload: user
+        })
+
+    }).catch((err) => {
+        return res.status(404).json({
+            error: {
+                errCode: ERRORS.SOMETHING_WRONG,
+                errMessage: "Something went wrong"
+            }
+        })
+    })
+}
 exports.updateUserDetails = async (req, res, next) => {
     const {
         id,
