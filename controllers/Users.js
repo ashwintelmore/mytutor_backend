@@ -7,7 +7,6 @@ const UserDetails = require("../models/UserDetails")
 
 exports.register = async (req, res, next) => {
     const { name, email, password } = req.body;
-
     const isE = isEmpty(name, email, password);
     if (isE)
         return res.status(200).json(isE);
@@ -56,14 +55,16 @@ exports.register = async (req, res, next) => {
 }
 
 exports.login = async (req, res, next) => {
+
     const { email, password } = req.body;
+    console.log('req.body :>> ', req.body);
 
     const isE = isEmpty(email, password);
     if (isE)
         return res.status(200).json(isE);
 
     const user = await UserDetails.findOne({ email: { $regex: email, $options: 'i' } })
-    console.log('user :>> ', user);
+
     if (!user)
         return res.status(404).json({
             error: {
@@ -121,6 +122,7 @@ exports.getUserData = async (req, res, next) => {
         id
     } = req.params;
 
+    console.log('req.headers', req.headers)
 
     const isE = isEmpty(id);
     if (isE)

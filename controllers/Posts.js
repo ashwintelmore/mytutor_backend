@@ -4,17 +4,26 @@ const Posts = require('../models/Posts');
 const UserDetails = require('../models/UserDetails');
 
 exports.createPosts = async (req, res) => {
-
+    console.log("new line", req.body)
     const {
         payload
     } = req.body;
     // slot data should be come from front end as first user need to login 
     // while login data is fetch and store in state send that slot with payload
+    console.log('r', payload)
+
+
+    if (!payload)
+        return res.status(500).json({
+            error: {
+                errCode: ERRORS.SOMETHING_WRONG,
+                errMessage: "Something went wrong"
+            }
+        })
 
     const newPost = new Posts(payload);
 
     return await newPost.save().then((data) => {
-        console.log('data', data)
         res.status(201).json({
             message: 'Post created successfully',
             payload: data

@@ -3,11 +3,15 @@ const express = require("express")
 const mongoose = require('mongoose')
 const cors = require('cors');
 
-// require('dotenv').config({ path: './.env.local' })//.env.production.local
-require('dotenv').config({ path: './.env.production.local' })//.env.production.local
+require('dotenv').config({ path: './.env.local' })//.env.production.local
+// require('dotenv').config({ path: './.env.production.local' })//.env.production.local
 const PORT = process.env.PORT
 const MONGO_URL = process.env.MONGO_URL
 const app = express()
+app.use(express.json())
+// app.use(express.urlencoded())
+app.use(cors())
+
 //routes
 const test = require('./routes/test')
 const Users = require('./routes/Users')
@@ -15,8 +19,6 @@ const Categories = require('./routes/Categories')
 const Posts = require('./routes/Posts')
 
 //middleware
-app.use(express.json())
-app.use(cors())
 
 //mongoDB
 

@@ -65,7 +65,7 @@ const slotSchema = new Schema({
 const userDetailsSchema = new Schema({
     role: {
         type: String,
-        enum: ['tutor', 'learner', 'admin'],
+        enum: ['tutor', 'learner', 'admin', 'common'],
         default: 'learner'
     },
     name: {
@@ -80,9 +80,28 @@ const userDetailsSchema = new Schema({
         type: String,
         trim: true,
     },
+
     profilePhoto: {
         type: String,
         default: ""
+    },
+    analytics: {
+        lectures: {
+            type: Number,
+            default: 0
+        },
+        hours: {
+            type: Number,
+            default: 0
+        },
+        learners: {
+            type: Number,
+            default: 0
+        },
+        favorite: {
+            type: Number,
+            default: 0
+        },
     },
     bio: {
         type: String,
@@ -101,16 +120,16 @@ const userDetailsSchema = new Schema({
         type: [String]
     },
     education: {
-        type: [educationSchema]
+        type: Array
     },
     workExperience: {
-        type: [workExperienceSchema]
+        type: Array
     },
     achievements: {
-        type: [achievementSchema]
+        type: Array
     },
     slots: {
-        type: [slotSchema]
+        type: Array
     }
 }, {
     timestamps: true

@@ -19,15 +19,12 @@ const slotSchema = new mongoose.Schema({
 
 
 const postSchema = new mongoose.Schema({
-    createdTutor: {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: 'UserDetails'
-    },
+
     postTitle: {
         type: String,
         default: ""
     },
-    discrip: {
+    descrp: {
         type: String,
         default: ""
     },
@@ -35,13 +32,22 @@ const postSchema = new mongoose.Schema({
         type: String,
         default: ""
     },
-    pricePerHour: {
+    charges: {
         type: Number,
         default: 0
+    },
+
+
+
+    //autometically
+    createdTutor: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'UserDetails'
     },
     slots: {
         type: [slotSchema],
     },
+
     learnerMassage: {
         type: String,
         default: ""

@@ -6,6 +6,7 @@ var router = express.Router();
 /* GET users listing. */
 router.post('/register', register)
 router.post('/login', login)
+
 router.get('/allUsers', getAllUsers)
 router.get('/getUser/:id', getUserData)
 
