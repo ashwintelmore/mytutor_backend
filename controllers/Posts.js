@@ -2,17 +2,30 @@ const { ERRORS } = require('../helper/constants');
 const { isEmpty, isInalidMongoDBid } = require('../helper/helper');
 const Posts = require('../models/Posts');
 const UserDetails = require('../models/UserDetails');
+const multer = require('multer');
+const upload = multer({ dest: 'uploads/postsThumbanails' })
+
+
+// const storage = multer.diskStorage({
+//     destination: 'uploads/postsThumbanails',
+//     filename: function (req, file, cb) {
+//         const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1E9)
+//         cb(null, file.fieldname + '-' + uniqueSuffix)
+//     }
+// })
+
+// const upload = multer({ storage: storage }).single('testimg')
+
+
 
 exports.createPosts = async (req, res) => {
-    console.log("new line", req.body)
     const {
         payload
     } = req.body;
     // slot data should be come from front end as first user need to login 
     // while login data is fetch and store in state send that slot with payload
-    console.log('r', payload)
 
-
+    // return
     if (!payload)
         return res.status(500).json({
             error: {
@@ -21,7 +34,14 @@ exports.createPosts = async (req, res) => {
             }
         })
 
-    const newPost = new Posts(payload);
+    // const newPost = new Posts({
+    //     ...payload,
+    //     thumbnailUrl: {
+    //         data: req.file.filename,
+    //         contentType: 'image/png'
+    //     }
+    // });
+    const newPost = new Posts(payload)
 
     return await newPost.save().then((data) => {
         res.status(201).json({
@@ -164,6 +184,42 @@ exports.getUserAllPosts = async (req, res, next) => {
 
     try {
         const posts = await Posts.find({ createdTutor: userId })
+        if (!posts)
+            return res.status(404).json({
+                error: {
+                    errCode: ERRORS.NOT_FOUND,
+                    errMessage: "Posts not exists"
+                }
+            })
+
+        return res.status(201).json({
+            message: 'Posts fetch successfully',
+            payload: posts
+        })
+
+    } catch (error) {
+        return res.status(500).json({
+            error: {
+                errCode: ERRORS.SOMETHING_WRONG,
+                errMessage: "Something went wrong"
+            }
+        })
+    }
+}
+
+exports.getPost = async (req, res, next) => {
+    const postId = req.params.id;
+
+    const isE = isEmpty(postId);
+    if (isE)
+        return res.status(200).json(isE);
+
+    const isinvalidId = isInalidMongoDBid(postId)
+    if (isinvalidId)
+        return res.status(200).json(isinvalidId)
+
+    try {
+        const posts = await Posts.findById({ _id: postId })
         if (!posts)
             return res.status(404).json({
                 error: {

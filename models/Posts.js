@@ -29,20 +29,35 @@ const postSchema = new mongoose.Schema({
         default: ""
     },
     thumbnailUrl: {
-        type: String,
-        default: ""
+        data: Buffer,
+        contentType: String
     },
     charges: {
         type: Number,
         default: 0
     },
 
-
+    postType: {
+        type: String,
+        enum: ['tutor', 'learner'],
+        default: 'learner'
+    },
+    category: {
+        type: String,
+        default: 'student'
+    },
+    tags: {
+        type: Array,
+    },
 
     //autometically
     createdTutor: {
         type: mongoose.Schema.Types.ObjectId,
         ref: 'UserDetails'
+    },
+    createdTutorName: {
+        type: String,
+        default: "Not Given"
     },
     slots: {
         type: [slotSchema],
