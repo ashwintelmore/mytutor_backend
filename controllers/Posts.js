@@ -90,34 +90,34 @@ exports.getAllPosts = async (req, res, next) => {
 
 exports.updatePostsDetails = async (req, res, next) => {
     const {
-        postsId,
+        postId,
         payload
     } = req.body;
 
-    const isE = isEmpty(postsId);
+    console.log(req.body)
+    const isE = isEmpty(postId);
     if (isE)
         return res.status(200).json(isE);
 
-    console.log(postsId)
-    const isinvalidId = isInalidMongoDBid(postsId)
+    const isinvalidId = isInalidMongoDBid(postId)
     if (isinvalidId)
         return res.status(200).json(isinvalidId)
 
 
     return await Posts.findByIdAndUpdate(
-        postsId,
+        postId,
         { ...payload },
-        { new: true }).then((posts) => {
-            if (!posts)
+        { new: true }).then((post) => {
+            if (!post)
                 return res.status(404).json({
                     error: {
                         errCode: ERRORS.NOT_FOUND,
-                        errMessage: "posts does not exists"
+                        errMessage: "post does not exists"
                     }
                 })
             return res.status(201).json({
                 message: 'posts data updated successfully',
-                payload: posts
+                payload: post
             })
 
         }).catch((err) => {

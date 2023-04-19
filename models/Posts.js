@@ -60,8 +60,18 @@ const postSchema = new mongoose.Schema({
         default: "Not Given"
     },
     slots: {
-        type: [slotSchema],
+        type: Object,
     },
+    reqSlot: [
+        {
+            reqID: mongoose.Schema.Types.ObjectId,
+            reqDates: Array,
+            reqTime: String,//hour
+            reqMassege: String,
+            reqAccept: Boolean,//true or false
+        }
+
+    ],
 
     learnerMassage: {
         type: String,

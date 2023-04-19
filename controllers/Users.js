@@ -122,8 +122,6 @@ exports.getUserData = async (req, res, next) => {
         id
     } = req.params;
 
-    console.log('req.headers', req.headers)
-
     const isE = isEmpty(id);
     if (isE)
         return res.status(200).json(isE);
@@ -137,11 +135,11 @@ exports.getUserData = async (req, res, next) => {
             return res.status(404).json({
                 error: {
                     errCode: ERRORS.NOT_FOUND,
-                    errMessage: "Users not exists"
+                    errMessage: "User not exists"
                 }
             })
         return res.status(201).json({
-            message: 'User data updated successfully',
+            message: 'User fetch successfully',
             payload: user
         })
 
@@ -160,7 +158,7 @@ exports.updateUserDetails = async (req, res, next) => {
         payload
     } = req.body;
 
-
+    console.log('req.body', req.body)
     const isE = isEmpty(id);
     if (isE)
         return res.status(200).json(isE);

@@ -129,7 +129,23 @@ const userDetailsSchema = new Schema({
         type: Array
     },
     slots: {
-        type: Array
+        available: {
+            type: String,
+            trim: true,
+            default: ""
+        },
+        customDates: {
+            type: Array,
+            default: []
+        },//array of selected date
+        isEveryTime: {
+            type: Boolean,
+            default: false
+        },
+        timeRange: {
+            type: Array,
+            default: []
+        }
     }
 }, {
     timestamps: true
