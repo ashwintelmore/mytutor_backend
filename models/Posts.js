@@ -63,15 +63,27 @@ const postSchema = new mongoose.Schema({
         type: Object,
     },
     reqSlot: [
-        {
-            reqID: mongoose.Schema.Types.ObjectId,
-            reqDates: Array,
-            reqTime: String,//hour
-            reqMassege: String,
-            reqAccept: Boolean,//true or false
-        }
 
     ],
+    // reqSlot: [
+    //     {
+    //         reqId: {
+    //             type: mongoose.Schema.Types.ObjectId,
+    //             ref: 'Requests'
+    //         },
+    //     }
+
+    // ],
+    // reqSlot: [
+    //     {
+    //         reqID: mongoose.Schema.Types.ObjectId,//requested user id
+    //         reqDates: Array,
+    //         reqTime: String,//hour
+    //         reqMassege: String,
+    //         reqAccept: Boolean,//true or false
+    //     }
+
+    // ],
 
     learnerMassage: {
         type: String,

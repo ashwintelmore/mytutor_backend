@@ -17,6 +17,8 @@ const test = require('./routes/test')
 const Users = require('./routes/Users')
 const Categories = require('./routes/Categories')
 const Posts = require('./routes/Posts')
+const Requests = require('./routes/Request')
+const Meetings = require('./routes/Meetings')
 
 //middleware
 
@@ -67,6 +69,8 @@ app.use('/api', test)
 app.use('/api', Users)
 app.use('/api', Categories)
 app.use('/api', Posts)
+app.use('/api', Requests)
+app.use('/api', Meetings)
 
 
 //port
