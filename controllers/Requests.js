@@ -14,6 +14,8 @@ exports.createRequest = async (req, res) => {
     // slot data should be come from front end as first user need to login 
     // while login data is fetch and store in state send that slot with payload
     // return
+
+    console.log('req.body', req.body)
     if (!payload)
         return res.status(500).json({
             error: {
@@ -21,6 +23,36 @@ exports.createRequest = async (req, res) => {
                 errMessage: "Something went wrong"
             }
         })
+
+    const isinvalidId = isInalidMongoDBid(payload._id)
+    if (!isinvalidId) {
+        //update
+        return await Requests.findByIdAndUpdate(
+            payload._id,
+            { ...payload },
+            { new: true }).then((request) => {
+                if (!request)
+                    return res.status(404).json({
+                        error: {
+                            errCode: ERRORS.NOT_FOUND,
+                            errMessage: "request does not exists"
+                        }
+                    })
+                return res.status(201).json({
+                    message: 'requests data updated successfully',
+                    payload: request
+                })
+
+            }).catch((err) => {
+                return res.status(404).json({
+                    error: {
+                        errCode: ERRORS.SOMETHING_WRONG,
+                        errMessage: "Something went wrong"
+                    }
+                })
+            })
+    }
+
     const newReq = new Requests(payload)
 
 
@@ -47,7 +79,6 @@ exports.updateRequest = async (req, res, next) => {
         payload
     } = req.body;
 
-    console.log(req.body)
     const isE = isEmpty(id);
     if (isE)
         return res.status(200).json(isE);
@@ -90,7 +121,7 @@ exports.getAllRequesterReqs = async (req, res, next) => {
         id
     } = req.params;
     try {
-        const reqs = await Requests.find({ requesterId: id })
+        const reqs = await Requests.find({ requesterId: id, cancelStatus: false })
         if (!reqs)
             return res.status(404).json({
                 error: {
@@ -113,12 +144,13 @@ exports.getAllRequesterReqs = async (req, res, next) => {
         })
     }
 }
+
 exports.getAllRequestedReqs = async (req, res, next) => {
     const {
         id
     } = req.params;
     try {
-        const reqs = await Requests.find({ requestedId: id })
+        const reqs = await Requests.find({ requestedId: id, cancelStatus: false })
         if (!reqs)
             return res.status(404).json({
                 error: {
@@ -142,119 +174,26 @@ exports.getAllRequestedReqs = async (req, res, next) => {
     }
 }
 
-
-
-
-
-
-
-
-
-
-exports.updatePostsDetails = async (req, res, next) => {
+exports.getAllPostAndRequestedReq = async (req, res, next) => {
     const {
-        postId,
-        payload
-    } = req.body;
-
-    console.log(req.body)
-    const isE = isEmpty(postId);
-    if (isE)
-        return res.status(200).json(isE);
-
-    const isinvalidId = isInalidMongoDBid(postId)
-    if (isinvalidId)
-        return res.status(200).json(isinvalidId)
-
-
-    return await Posts.findByIdAndUpdate(
-        postId,
-        { ...payload },
-        { new: true }).then((post) => {
-            if (!post)
-                return res.status(404).json({
-                    error: {
-                        errCode: ERRORS.NOT_FOUND,
-                        errMessage: "post does not exists"
-                    }
-                })
-            return res.status(201).json({
-                message: 'posts data updated successfully',
-                payload: post
-            })
-
-        }).catch((err) => {
-            return res.status(404).json({
-                error: {
-                    errCode: ERRORS.SOMETHING_WRONG,
-                    errMessage: "Something went wrong"
-                }
-            })
-        })
-}
-exports.deletePost = async (req, res, next) => {
-
-    const postId = req.params.id
-
-
-    const isE = isEmpty(postId);
-    if (isE)
-        return res.status(200).json(isE);
-
-    const isinvalidId = isInalidMongoDBid(postId)
-    if (isinvalidId)
-        return res.status(200).json(isinvalidId)
-
-
-    return await Posts.findByIdAndDelete(postId).then((posts) => {
-
-        if (!posts)
-            return res.status(404).json({
-                error: {
-                    errCode: ERRORS.NOT_FOUND,
-                    errMessage: "posts does not exists"
-                }
-            })
-        return res.status(201).json({
-            message: 'posts data deleted successfully',
-            payload: postId
-        })
-
-    }).catch((err) => {
-        return res.status(404).json({
-            error: {
-                errCode: ERRORS.SOMETHING_WRONG,
-                errMessage: "Something went wrong"
-            }
-        })
-    })
-}
-
-
-exports.getUserAllPosts = async (req, res, next) => {
-    const userId = req.params.id;
-
-    const isE = isEmpty(userId);
-    if (isE)
-        return res.status(200).json(isE);
-
-    const isinvalidId = isInalidMongoDBid(userId)
-    if (isinvalidId)
-        return res.status(200).json(isinvalidId)
+        requestedId,
+        postId
+    } = req.params;
 
     try {
-        const posts = await Posts.find({ createdTutor: userId })
-        if (!posts)
+        const reqs = await Requests.find({ requestedId: requestedId, postId: postId, cancelStatus: false })
+
+        if (!reqs)
             return res.status(404).json({
                 error: {
                     errCode: ERRORS.NOT_FOUND,
-                    errMessage: "Posts not exists"
+                    errMessage: "requests not exists"
                 }
             })
 
         return res.status(201).json({
-            message: 'Posts fetch successfully',
-            payload: posts
+            message: 'resqusts fetch successfully',
+            payload: reqs
         })
 
     } catch (error) {
@@ -267,30 +206,26 @@ exports.getUserAllPosts = async (req, res, next) => {
     }
 }
 
-exports.getPost = async (req, res, next) => {
-    const postId = req.params.id;
-
-    const isE = isEmpty(postId);
-    if (isE)
-        return res.status(200).json(isE);
-
-    const isinvalidId = isInalidMongoDBid(postId)
-    if (isinvalidId)
-        return res.status(200).json(isinvalidId)
+exports.getAllPostAndRequesterReq = async (req, res, next) => {
+    const {
+        requesterId,
+        postId
+    } = req.params;
 
     try {
-        const posts = await Posts.findById({ _id: postId })
-        if (!posts)
+        const reqs = await Requests.find({ requesterId: requesterId, postId: postId, cancelStatus: false })
+
+        if (!reqs)
             return res.status(404).json({
                 error: {
                     errCode: ERRORS.NOT_FOUND,
-                    errMessage: "Posts not exists"
+                    errMessage: "requests not exists"
                 }
             })
 
         return res.status(201).json({
-            message: 'Posts fetch successfully',
-            payload: posts
+            message: 'resqusts fetch successfully',
+            payload: reqs
         })
 
     } catch (error) {

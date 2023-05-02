@@ -6,10 +6,10 @@ const meetingSchema = new mongoose.Schema({
         type: mongoose.Schema.Types.ObjectId,
         ref: 'UserDetails'// learner
     },
-    code: {
+    meetingCode: {
         type: String,
     },
-    name: {
+    meetingName: {
         type: String,
     },
     participants: [
