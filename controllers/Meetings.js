@@ -37,6 +37,42 @@ exports.createMeeting = async (req, res) => {
     })
 }
 
+exports.updateMeeting = async (req, res) => {
+    const {
+        payload
+    } = req.body;
+    const {
+        meetId
+    } = req.params;
+
+    if (!payload)
+        return res.status(500).json({
+            error: {
+                errCode: ERRORS.SOMETHING_WRONG,
+                errMessage: "Something went wrong with payload"
+            }
+        })
+
+    const newMeet = new Meetings(payload)
+
+
+    return await newMeet.save().then(async (data) => {
+
+        res.status(201).json({
+            message: 'Meeting created successfully',
+            payload: data
+        })
+    }).catch((err) => {
+        console.log('err', err)
+        return res.status(500).json({
+            error: {
+                errCode: ERRORS.SOMETHING_WRONG,
+                errMessage: "Something went wrong"
+            }
+        })
+    })
+}
+
 
 
 exports.getUserAllMeeting = async (req, res, next) => {

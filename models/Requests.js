@@ -36,9 +36,13 @@ const requestSchema = new mongoose.Schema({
 
     reqAccept: {
         type: Boolean,
+        default: null
+    },//true or falsereqDates: Array,
+    cancelStatus: {
+        type: Boolean,
         default: false
     },//true or falsereqDates: Array,
-    meeting: {
+    meetingId: {
         type: mongoose.Schema.Types.ObjectId,
         ref: 'Meetings'
     },
