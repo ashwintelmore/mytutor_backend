@@ -158,7 +158,6 @@ exports.updateUserDetails = async (req, res, next) => {
         payload
     } = req.body;
 
-    console.log('req.body', req.body)
     const isE = isEmpty(id);
     if (isE)
         return res.status(200).json(isE);

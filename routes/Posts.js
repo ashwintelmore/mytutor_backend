@@ -1,5 +1,5 @@
 var express = require('express');
-const { createPosts, getAllPosts, getUserAllPosts, updatePostsDetails, deletePost, getPost } = require('../controllers/Posts');
+const { createPosts, getAllPosts, getUserAllPosts, updatePostsDetails, deletePost, getPost, searchPost } = require('../controllers/Posts');
 var router = express.Router();
 const multer = require('multer');
 const upload = multer({ dest: 'uploads/postsThumbanails' })
@@ -15,5 +15,9 @@ router.post('/createpost', createPosts)
 
 router.put('/updatePosts', updatePostsDetails)
 router.delete('/deletePosts/:id', deletePost)
+
+
+router.get('/search', searchPost)
+
 
 module.exports = router;

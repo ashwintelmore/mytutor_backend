@@ -19,6 +19,7 @@ const Categories = require('./routes/Categories')
 const Posts = require('./routes/Posts')
 const Requests = require('./routes/Request')
 const Meetings = require('./routes/Meetings')
+const Favourites = require('./routes/Favourites')
 
 //middleware
 
@@ -71,6 +72,7 @@ app.use('/api', Categories)
 app.use('/api', Posts)
 app.use('/api', Requests)
 app.use('/api', Meetings)
+app.use('/api', Favourites)
 
 
 //port

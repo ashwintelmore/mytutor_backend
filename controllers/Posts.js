@@ -241,3 +241,66 @@ exports.getPost = async (req, res, next) => {
         })
     }
 }
+
+
+exports.searchPost = async (req, res, next) => {
+
+
+    const page = parseInt(req.query.page) - 1 || 0;
+    const limit = parseInt(req.query.limit) || 1;
+    const search = req.query.search || "";
+    const type = req.query.type || 'posts'; // - user or - post by default
+    const postType = req.query.postType || 'learner';
+    let sort = req.query.sort || {};//
+    // - low to high  -> l2h
+    // - high to low -> h2l
+    // - recent  -> recent
+    // - older  -> older
+    //// - most liked
+
+    // - available seats
+    // - active
+    let tags = req.query.tags || "All";
+
+    if (sort === 'l2h') {
+        sort = { charges: 1 }
+    } else if (sort === 'h2l') {
+        sort = { charges: -1 }
+    } else if (sort === 'recent') {
+        sort = { createdAt: -1 }
+    } else if (sort === 'older') {
+        sort = { createdAt: 1 }
+    }
+
+    console.log('req.query', req.query)
+    let result;
+    if (type === 'posts') {
+        result = await Posts.find({
+            postTitle: { $regex: search, $options: "i" },
+            postType: postType,
+        })
+            // .skip(page)
+            .sort(sort)
+        // .limit(limit)
+
+    } else if (type === "users") {
+        //user
+        result = await UserDetails.find({ name: { $regex: search, $options: "i" } }).limit(limit)
+    }
+
+
+    if (!result)
+        return res.status(404).json({
+            error: {
+                errCode: ERRORS.NOT_FOUND,
+                errMessage: "Posts not exists"
+            }
+        })
+    return res.status(200).json({
+        message: 'Posts fetch successfully',
+        payload: result
+    })
+}
+
+
+
