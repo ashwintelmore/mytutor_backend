@@ -247,7 +247,7 @@ exports.searchPost = async (req, res, next) => {
 
 
     const page = parseInt(req.query.page) - 1 || 0;
-    const limit = parseInt(req.query.limit) || 1;
+    const limit = parseInt(req.query.limit) || 5;
     const search = req.query.search || "";
     const type = req.query.type || 'posts'; // - user or - post by default
     const postType = req.query.postType || 'learner';
@@ -281,7 +281,7 @@ exports.searchPost = async (req, res, next) => {
         })
             // .skip(page)
             .sort(sort)
-        // .limit(limit)
+            .limit(limit)
 
     } else if (type === "users") {
         //user

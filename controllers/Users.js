@@ -7,6 +7,7 @@ const UserDetails = require("../models/UserDetails")
 
 exports.register = async (req, res, next) => {
     const { name, email, password } = req.body;
+
     const isE = isEmpty(name, email, password);
     if (isE)
         return res.status(200).json(isE);
