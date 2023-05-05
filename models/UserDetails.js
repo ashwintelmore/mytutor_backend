@@ -146,7 +146,14 @@ const userDetailsSchema = new Schema({
             type: Array,
             default: []
         }
+    },
+    payment: {
+        upiId: {
+            type: String,
+            default: ''
+        }
     }
+
 }, {
     timestamps: true
 });

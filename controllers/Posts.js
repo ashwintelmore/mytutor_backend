@@ -63,6 +63,7 @@ exports.getAllPosts = async (req, res, next) => {
 
     try {
         const posts = await Posts.find()
+        console.log('posts', posts)
         if (!posts)
             return res.status(404).json({
                 error: {
