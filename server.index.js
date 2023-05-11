@@ -39,26 +39,6 @@ const connect = async () => {
     });
 };
 
-const multer = require('multer');
-const upload = multer({ dest: 'uploads/postsThumbanails' })
-
-
-// const storage = multer.diskStorage({
-//     destination: 'uploads/postsThumbanails',
-//     filename: function (req, file, cb) {
-//         cb(null, file.fieldname)
-//     }
-// })
-
-// const upload = multer({ storage: storage }).single('testimg')
-
-
-
-app.post('/upload', upload.single("testimg"), (req, res) => {
-
-    console.log(req.body)
-    console.log(req.file)
-})
 
 
 //routes
