@@ -6,12 +6,23 @@ const categorySchema = new Schema({
     catName: {
         type: String,
         trim: true,
-        unique: true
+        // unique: true
+        default: ''
     },
     imgUrl: {
         type: String,
-        trim: true
-    }
+        default: ''
+    },
+    image: {
+        data: {
+            type: Buffer,
+            default: []
+        },
+        contentType: {
+            type: String,
+            default: ''
+        },
+    },
 }, { timestamps: true });
 
 

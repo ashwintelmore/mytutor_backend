@@ -15,8 +15,7 @@ exports.createPayment = async (req, res) => {
     // slot data should be come from front end as first user need to login 
     // while login data is fetch and store in state send that slot with payload
     // return
-
-    console.log('req.body', req.body)
+    console.log('payload', payload)
     if (!payload)
         return res.status(500).json({
             error: {
@@ -51,6 +50,8 @@ exports.updatePayment = async (req, res, next) => {
     const {
         id
     } = req.params;
+
+
     const isE = isEmpty(id);
     if (isE)
         return res.status(200).json(isE);
@@ -63,17 +64,32 @@ exports.updatePayment = async (req, res, next) => {
     return await Payments.findByIdAndUpdate(
         id,
         { ...payload },
-        { new: true }).then((Payment) => {
-            if (!Payment)
+        { new: true }).then(async (payment) => {
+
+
+            console.log('payment', payment)
+            if (payment.paymentStatus.isCompletd) {
+                //update tutordata
+                await UserDetails.findByIdAndUpdate({ _id: payment.tutorId }, { $inc: { 'analytics.lectures': 1 } }, { new: true }).then((data) => {
+                    console.log('user data', data)
+                })
+
+                await Requests.findByIdAndUpdate({ _id: payment.requestId }, { isPaymentComplete: true })
+                    .then((data) => {
+                        console.log('request data', data)
+                    })
+            }
+
+            if (!payment)
                 return res.status(404).json({
                     error: {
                         errCode: ERRORS.NOT_FOUND,
-                        errMessage: "Payment does not exists"
+                        errMessage: "payment does not exists"
                     }
                 })
             return res.status(201).json({
-                message: 'Payments data updated successfully',
-                payload: Payment
+                message: 'payments data updated successfully',
+                payload: payment
             })
 
         }).catch((err) => {
@@ -88,6 +104,36 @@ exports.updatePayment = async (req, res, next) => {
 
 
 
+exports.getPayment = async (req, res, next) => {
+    const {
+        id
+    } = req.params;
+
+    try {
+        const resp = await Payments.findById({ _id: id })
+        console.log('req.params', resp)
+        if (!resp)
+            return res.status(404).json({
+                error: {
+                    errCode: ERRORS.NOT_FOUND,
+                    errMessage: "Payments does not exists"
+                }
+            })
+
+        return res.status(201).json({
+            message: 'Payments fetch successfully',
+            payload: resp
+        })
+
+    } catch (error) {
+        return res.status(500).json({
+            error: {
+                errCode: ERRORS.SOMETHING_WRONG,
+                errMessage: "Something went wrong"
+            }
+        })
+    }
+}
 exports.getAllPayments = async (req, res, next) => {
     const {
         tutorId,

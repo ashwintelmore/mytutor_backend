@@ -46,6 +46,14 @@ const requestSchema = new mongoose.Schema({
         type: mongoose.Schema.Types.ObjectId,
         ref: 'Meetings'
     },
+    paymentId: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'Payment'
+    },
+    isPaymentComplete: {
+        type: Boolean,
+        default: false
+    },
     meetingName: {
         type: String,
         default: ''

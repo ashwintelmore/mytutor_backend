@@ -15,7 +15,6 @@ exports.createRequest = async (req, res) => {
     // while login data is fetch and store in state send that slot with payload
     // return
 
-    console.log('req.body', req.body)
     if (!payload)
         return res.status(500).json({
             error: {

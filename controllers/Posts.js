@@ -3,19 +3,6 @@ const { isEmpty, isInalidMongoDBid } = require('../helper/helper');
 const Posts = require('../models/Posts');
 const Requests = require('../models/Requests');
 const UserDetails = require('../models/UserDetails');
-const multer = require('multer');
-const upload = multer({ dest: 'uploads/postsThumbanails' })
-
-
-// const storage = multer.diskStorage({
-//     destination: 'uploads/postsThumbanails',
-//     filename: function (req, file, cb) {
-//         const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1E9)
-//         cb(null, file.fieldname + '-' + uniqueSuffix)
-//     }
-// })
-
-// const upload = multer({ storage: storage }).single('testimg')
 
 
 
@@ -63,7 +50,6 @@ exports.getAllPosts = async (req, res, next) => {
 
     try {
         const posts = await Posts.find()
-        console.log('posts', posts)
         if (!posts)
             return res.status(404).json({
                 error: {
@@ -90,11 +76,15 @@ exports.getAllPosts = async (req, res, next) => {
 
 exports.updatePostsDetails = async (req, res, next) => {
     const {
-        postId,
         payload
     } = req.body;
+    const {
+        postId
+    } = req.params;
 
-    console.log(req.body)
+
+    console.log('payload', payload)
+
     const isE = isEmpty(postId);
     if (isE)
         return res.status(200).json(isE);
@@ -248,19 +238,12 @@ exports.searchPost = async (req, res, next) => {
 
 
     const page = parseInt(req.query.page) - 1 || 0;
-    const limit = parseInt(req.query.limit) || 5;
+    const limit = parseInt(req.query.limit) || '';
     const search = req.query.search || "";
     const type = req.query.type || 'posts'; // - user or - post by default
-    const postType = req.query.postType || 'learner';
+    const postType = req.query.postType || '';
+    const category = req.query.category || '';
     let sort = req.query.sort || {};//
-    // - low to high  -> l2h
-    // - high to low -> h2l
-    // - recent  -> recent
-    // - older  -> older
-    //// - most liked
-
-    // - available seats
-    // - active
     let tags = req.query.tags || "All";
 
     if (sort === 'l2h') {
@@ -273,13 +256,27 @@ exports.searchPost = async (req, res, next) => {
         sort = { createdAt: 1 }
     }
 
+
     console.log('req.query', req.query)
-    let result;
-    if (type === 'posts') {
-        result = await Posts.find({
+
+    let findQuery = { postTitle: { $regex: search, $options: "i" }, }
+    if (postType != '') {
+        findQuery = {
             postTitle: { $regex: search, $options: "i" },
             postType: postType,
-        })
+        }
+    }
+    if (category != '') {
+        findQuery = {
+            ...findQuery,
+            category: category
+        }
+    }
+    console.log('findquery', findQuery)
+
+    let result;
+    if (type === 'posts') {
+        result = await Posts.find(findQuery)
             // .skip(page)
             .sort(sort)
             .limit(limit)

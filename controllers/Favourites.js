@@ -12,6 +12,7 @@ exports.createFavourite = async (req, res) => {
     const {
         payload
     } = req.body;
+
     if (!payload)
         return res.status(500).json({
             error: {
@@ -22,6 +23,24 @@ exports.createFavourite = async (req, res) => {
     const newData = new Favourites(payload)
 
     return await newData.save().then(async (data) => {
+
+
+        //find tutor by id in favourite database
+        let allFavOfTutor = await Favourites.find({ tutorId: data.tutorId, isFavourite: true });
+
+        //update that tutor with array
+        const userData = await UserDetails.findById({ _id: data.tutorId });
+
+        const userDatatobeUpdated = {
+            analytics: {
+                ...userData.analytics,
+                favorite: allFavOfTutor.length
+            }
+        }
+        const updatedUserData = await UserDetails.updateOne(
+            { _id: data.tutorId },
+            { ...userDatatobeUpdated }
+            , { new: true })
 
         res.status(201).json({
             message: 'Favourite created successfully',
@@ -40,9 +59,15 @@ exports.createFavourite = async (req, res) => {
 
 exports.updateFavourite = async (req, res, next) => {
     const {
-        id,
         payload
     } = req.body;
+
+    const {
+        id
+    } = req.params;
+
+    console.log('req.body', req.body)
+    console.log('req.params', req.params)
 
     const isE = isEmpty(id);
     if (isE)
@@ -56,8 +81,29 @@ exports.updateFavourite = async (req, res, next) => {
     return await Favourites.findByIdAndUpdate(
         id,
         { ...payload },
-        { new: true }).then((Favourite) => {
-            if (!Favourite)
+        { new: true }).then(async (data) => {
+
+
+            console.log('data', data)
+
+            //find tutor by id in favourite database
+            let allFavOfTutor = await Favourites.find({ tutorId: data.tutorId, isFavourite: true });
+
+            //update that tutor with array
+            const userData = await UserDetails.findById({ _id: data.tutorId });
+
+            const userDatatobeUpdated = {
+                analytics: {
+                    ...userData.analytics,
+                    favorite: allFavOfTutor.length
+                }
+            }
+            await UserDetails.updateOne(
+                { _id: data.tutorId },
+                { ...userDatatobeUpdated }
+                , { new: true })
+
+            if (!data)
                 return res.status(404).json({
                     error: {
                         errCode: ERRORS.NOT_FOUND,
@@ -66,7 +112,7 @@ exports.updateFavourite = async (req, res, next) => {
                 })
             return res.status(201).json({
                 message: 'Favourites data updated successfully',
-                payload: Favourite
+                payload: data
             })
 
         }).catch((err) => {
@@ -81,23 +127,33 @@ exports.updateFavourite = async (req, res, next) => {
 
 
 
-exports.getAllRequesterReqs = async (req, res, next) => {
+exports.getFavourites = async (req, res, next) => {
     const {
-        id
-    } = req.params;
+        tutorId,
+        learnerId,
+    } = req.query;
+    let findQuery = {}
+    if (tutorId != '' && learnerId != '') {
+        findQuery = { tutorId: tutorId, learnerId: learnerId }
+    } else if (tutorId != '') {
+        findQuery = { tutorId: tutorId, isFavourite: true }
+    } else if (learnerId != '') {
+        findQuery = { learnerId: learnerId, isFavourite: true }
+    }
+    console.log('findQuery', findQuery)
     try {
-        const reqs = await Requests.find({ requesterId: id, cancelStatus: false })
-        if (!reqs)
+        const resp = await Favourites.find(findQuery)
+        if (!resp)
             return res.status(404).json({
                 error: {
                     errCode: ERRORS.NOT_FOUND,
-                    errMessage: "requests not exists"
+                    errMessage: "Favourit not exists"
                 }
             })
 
         return res.status(201).json({
-            message: 'resqusts fetch successfully',
-            payload: reqs
+            message: 'Favourit fetch successfully',
+            payload: resp
         })
 
     } catch (error) {
@@ -109,99 +165,4 @@ exports.getAllRequesterReqs = async (req, res, next) => {
         })
     }
 }
-
-exports.getAllRequestedReqs = async (req, res, next) => {
-    const {
-        id
-    } = req.params;
-    try {
-        const reqs = await Requests.find({ requestedId: id, cancelStatus: false })
-        if (!reqs)
-            return res.status(404).json({
-                error: {
-                    errCode: ERRORS.NOT_FOUND,
-                    errMessage: "requests not exists"
-                }
-            })
-
-        return res.status(201).json({
-            message: 'resqusts fetch successfully',
-            payload: reqs
-        })
-
-    } catch (error) {
-        return res.status(500).json({
-            error: {
-                errCode: ERRORS.SOMETHING_WRONG,
-                errMessage: "Something went wrong"
-            }
-        })
-    }
-}
-
-exports.getAllPostAndRequestedReq = async (req, res, next) => {
-    const {
-        requestedId,
-        postId
-    } = req.params;
-
-    try {
-        const reqs = await Requests.find({ requestedId: requestedId, postId: postId, cancelStatus: false })
-
-        if (!reqs)
-            return res.status(404).json({
-                error: {
-                    errCode: ERRORS.NOT_FOUND,
-                    errMessage: "requests not exists"
-                }
-            })
-
-        return res.status(201).json({
-            message: 'resqusts fetch successfully',
-            payload: reqs
-        })
-
-    } catch (error) {
-        return res.status(500).json({
-            error: {
-                errCode: ERRORS.SOMETHING_WRONG,
-                errMessage: "Something went wrong"
-            }
-        })
-    }
-}
-
-exports.getAllPostAndRequesterReq = async (req, res, next) => {
-    const {
-        requesterId,
-        postId
-    } = req.params;
-
-    try {
-        const reqs = await Requests.find({ requesterId: requesterId, postId: postId, cancelStatus: false })
-
-        if (!reqs)
-            return res.status(404).json({
-                error: {
-                    errCode: ERRORS.NOT_FOUND,
-                    errMessage: "requests not exists"
-                }
-            })
-
-        return res.status(201).json({
-            message: 'resqusts fetch successfully',
-            payload: reqs
-        })
-
-    } catch (error) {
-        return res.status(500).json({
-            error: {
-                errCode: ERRORS.SOMETHING_WRONG,
-                errMessage: "Something went wrong"
-            }
-        })
-    }
-}
-
-
 

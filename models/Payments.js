@@ -12,17 +12,39 @@ const paymentSchema = new mongoose.Schema({
     },
     postId: {//it can be multiple
         type: mongoose.Schema.Types.ObjectId,
-        ref: 'UserDetails'// learner
+        ref: 'Post'// learner
     },
     requestId: {//it can be multiple
         type: mongoose.Schema.Types.ObjectId,
-        ref: 'UserDetails'// learner
+        ref: 'Request'// learner
     },
-    amount: {
+    paymentStatus: {
+        isCompletd: {
+            type: Boolean,
+            default: false,
+        },
+        isInitiated: {
+            type: Boolean,
+            default: true,
+        },
+        isDoneByLearner: {
+            type: Boolean,
+            default: false,
+        },
+        isReceivedByTutor: {
+            type: Boolean,
+            default: false,
+        },
+    },
+    charges: {
         type: String,
         default: '',
     },
     upiId: {
+        type: String,
+        default: '',
+    },
+    remark: {
         type: String,
         default: '',
     },

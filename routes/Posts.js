@@ -13,9 +13,8 @@ router.get('/getPost/:id', getPost)
 
 router.post('/createpost', createPosts)
 
-router.put('/updatePosts', updatePostsDetails)
+router.put('/updatePosts/:postId', updatePostsDetails)
 router.delete('/deletePosts/:id', deletePost)
-
 
 router.get('/search', searchPost)
 

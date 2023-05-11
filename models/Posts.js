@@ -105,10 +105,22 @@ const postSchema = new mongoose.Schema({
         type: mongoose.Schema.Types.ObjectId,
         ref: 'UserDetails'
     }],
-    comments: [{
-        type: mongoose.Schema.Types.ObjectId,
-        ref: 'Comment'
-    }]
+    comments: [
+        {
+            learnerId: {
+                type: mongoose.Schema.Types.ObjectId,
+                ref: 'UserDetails'
+            },
+            learnerName: {
+                type: String,
+                default: ""
+            },
+            comment: {
+                type: String,
+                default: ""
+            },
+        }
+    ]
 }
     , {
         timestamps: true
