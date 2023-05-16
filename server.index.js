@@ -20,7 +20,7 @@ const Posts = require('./routes/Posts')
 const Requests = require('./routes/Request')
 const Meetings = require('./routes/Meetings')
 const Favourites = require('./routes/Favourites')
-const Payments = require('./routes/Favourites')
+const Payments = require('./routes/Payments')
 
 //middleware
 

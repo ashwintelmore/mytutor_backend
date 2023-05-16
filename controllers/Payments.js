@@ -109,6 +109,9 @@ exports.getPayment = async (req, res, next) => {
         id
     } = req.params;
 
+    console.log('req.params', req.params)
+
+
     try {
         const resp = await Payments.findById({ _id: id })
         console.log('req.params', resp)

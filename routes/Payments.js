@@ -7,7 +7,7 @@ const { createPayment, updatePayment, getAllPayments, getPayment } = require('..
 /* GET users listing. */
 router.post('/createPayment', createPayment)
 router.put('/updatePayment/:id?', updatePayment)
-router.get('/getPayment/:id', getPayment)
+router.get('/getPayment/:id?', getPayment)
 router.get('/getAllpayments?', getAllPayments)
 
 

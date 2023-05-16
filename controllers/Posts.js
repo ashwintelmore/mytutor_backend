@@ -49,7 +49,7 @@ exports.createPosts = async (req, res) => {
 exports.getAllPosts = async (req, res, next) => {
 
     try {
-        const posts = await Posts.find()
+        const posts = await Posts.find().populate('createdTutor')
         if (!posts)
             return res.status(404).json({
                 error: {
@@ -158,9 +158,6 @@ exports.deletePost = async (req, res, next) => {
 }
 
 
-
-
-
 exports.getUserAllPosts = async (req, res, next) => {
     const userId = req.params.id;
 
@@ -173,7 +170,7 @@ exports.getUserAllPosts = async (req, res, next) => {
         return res.status(200).json(isinvalidId)
 
     try {
-        const posts = await Posts.find({ createdTutor: userId })
+        const posts = await Posts.find({ createdTutor: userId }).populate('createdTutor')
         if (!posts)
             return res.status(404).json({
                 error: {
@@ -209,7 +206,7 @@ exports.getPost = async (req, res, next) => {
         return res.status(200).json(isinvalidId)
 
     try {
-        const posts = await Posts.findById({ _id: postId })
+        const posts = await Posts.findById({ _id: postId }).populate('createdTutor')
         if (!posts)
             return res.status(404).json({
                 error: {
@@ -277,6 +274,7 @@ exports.searchPost = async (req, res, next) => {
     let result;
     if (type === 'posts') {
         result = await Posts.find(findQuery)
+            .populate('createdTutor')
             // .skip(page)
             .sort(sort)
             .limit(limit)

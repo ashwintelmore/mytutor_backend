@@ -18,7 +18,7 @@ const requestSchema = new mongoose.Schema({
     },
     postId: {//it can be multiple
         type: mongoose.Schema.Types.ObjectId,
-        ref: 'Posts'// learner
+        ref: 'Post'// learner
     },
     postName: {//it can be multiple
         type: String,
@@ -44,7 +44,7 @@ const requestSchema = new mongoose.Schema({
     },//true or falsereqDates: Array,
     meetingId: {
         type: mongoose.Schema.Types.ObjectId,
-        ref: 'Meetings'
+        ref: 'Meeting'
     },
     paymentId: {
         type: mongoose.Schema.Types.ObjectId,

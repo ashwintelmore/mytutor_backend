@@ -2,65 +2,6 @@
 const mongoose = require('mongoose');
 const { Schema } = mongoose;
 
-const educationSchema = new Schema({
-
-    collegeName: String,
-    degree: String,
-    location: String,
-    description: String,
-    percentage: Number,
-    date: {
-        from: Date,
-        to: Date
-    },
-    media: {
-        type: [String]
-    }
-}, { _id: false });
-
-const workExperienceSchema = new Schema({
-    title: String,
-    companyName: String,
-    location: String,
-    description: String,
-    date: {
-        from: Date,
-        to: Date
-    },
-    media: {
-        type: [String]
-    }
-}, { _id: false });
-
-const achievementSchema = new Schema({
-    title: String,
-    organisation: String,
-    location: String,
-    description: String,
-    date: {
-        from: Date,
-        to: Date
-    },
-    media: {
-        type: [String]
-    }
-}, { _id: false });
-
-const slotSchema = new Schema({
-    available: {
-        type: String,
-        enum: ['everyday', 'weekend', 'weekdays', 'not available']
-    },
-    customDate: {
-        type: [Date]
-    },
-    timeRange: {
-        type: [{
-            from: String,
-            to: String
-        }]
-    }
-}, { _id: false });
 
 const userDetailsSchema = new Schema({
     role: {

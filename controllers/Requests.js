@@ -113,14 +113,17 @@ exports.updateRequest = async (req, res, next) => {
         })
 }
 
-
-
 exports.getAllRequesterReqs = async (req, res, next) => {
     const {
         id
     } = req.params;
     try {
         const reqs = await Requests.find({ requesterId: id, cancelStatus: false })
+            .populate('requesterId')
+            .populate('requestedId')
+            .populate('postId')
+            .populate('meetingId')
+            .populate('paymentId')
         if (!reqs)
             return res.status(404).json({
                 error: {
@@ -150,6 +153,11 @@ exports.getAllRequestedReqs = async (req, res, next) => {
     } = req.params;
     try {
         const reqs = await Requests.find({ requestedId: id, cancelStatus: false })
+            .populate('requesterId')
+            .populate('requestedId')
+            .populate('postId')
+            .populate('meetingId')
+            .populate('paymentId')
         if (!reqs)
             return res.status(404).json({
                 error: {

@@ -1,22 +1,6 @@
 const mongoose = require('mongoose');
 
 
-const slotSchema = new mongoose.Schema({
-    available: {
-        type: String,
-        enum: ['everyday', 'weekend', 'weekdays', 'not available']
-    },
-    customDate: {
-        type: [Date]
-    },
-    timeRange: {
-        type: [{
-            from: String,
-            to: String
-        }]
-    }
-}, { _id: false });
-
 
 const postSchema = new mongoose.Schema({
 
