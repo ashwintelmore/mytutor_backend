@@ -13,8 +13,11 @@ const postSchema = new mongoose.Schema({
         default: ""
     },
     thumbnailUrl: {
-        data: Buffer,
-        contentType: String
+        image: {
+            type: Number,
+            default: Math.ceil(Math.random() * 10)
+
+        }
     },
     charges: {
         type: Number,
