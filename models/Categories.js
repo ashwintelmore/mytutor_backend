@@ -13,6 +13,10 @@ const categorySchema = new Schema({
         type: String,
         default: ''
     },
+    priority: {//high number high priority
+        type: Number,
+        default: 0
+    },
     image: {
         data: {
             type: Buffer,

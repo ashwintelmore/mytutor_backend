@@ -118,7 +118,7 @@ exports.updateCategory = async (req, res, next) => {
 exports.getAllCategories = async (req, res, next) => {
 
 
-    const cats = await Categories.find()
+    const cats = await Categories.find().sort({ 'priority': -1 })
 
     if (!cats || cats.length <= 0)
         return res.status(404).json({
