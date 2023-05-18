@@ -6,6 +6,7 @@ const Meetings = require('../models/Meeting');
 const UserDetails = require('../models/UserDetails');
 const multer = require('multer');
 const Payments = require('../models/Payments');
+const fs = require('file-system');
 
 
 exports.createPayment = async (req, res) => {
@@ -15,7 +16,8 @@ exports.createPayment = async (req, res) => {
     // slot data should be come from front end as first user need to login 
     // while login data is fetch and store in state send that slot with payload
     // return
-    console.log('payload', payload)
+    console.log('req.body', req.body)
+
     if (!payload)
         return res.status(500).json({
             error: {
@@ -24,13 +26,28 @@ exports.createPayment = async (req, res) => {
             }
         })
 
-    const newData = new Payments(payload)
+    let data = {
+        ...JSON.parse(payload),
+    }
 
-    return await newData.save().then(async (data) => {
+    if (req.file) {
+        data = {
+            ...data,
+            image: {
+                data: fs.readFileSync(req.file.path),
+                contentType: req.file.mimetype
+            }
+        }
+    }
+
+
+    const newData = new Payments(data)
+
+    return await newData.save().then(async (_data) => {
 
         res.status(201).json({
             message: 'Payment created successfully',
-            payload: data
+            payload: _data
         })
     }).catch((err) => {
         console.log('err', err)
@@ -51,7 +68,6 @@ exports.updatePayment = async (req, res, next) => {
         id
     } = req.params;
 
-
     const isE = isEmpty(id);
     if (isE)
         return res.status(200).json(isE);
@@ -61,22 +77,35 @@ exports.updatePayment = async (req, res, next) => {
         return res.status(200).json(isinvalidId)
 
 
+    let data = {
+        ...JSON.parse(payload),
+    }
+
+    if (req.file) {
+        data = {
+            ...data,
+            image: {
+                data: fs.readFileSync(req.file.path),
+                contentType: req.file.mimetype
+            }
+        }
+    }
+
+
     return await Payments.findByIdAndUpdate(
         id,
-        { ...payload },
+        { ...data },
         { new: true }).then(async (payment) => {
 
-
-            console.log('payment', payment)
             if (payment.paymentStatus.isCompletd) {
                 //update tutordata
                 await UserDetails.findByIdAndUpdate({ _id: payment.tutorId }, { $inc: { 'analytics.lectures': 1 } }, { new: true }).then((data) => {
-                    console.log('user data', data)
+                    // console.log('user data', data)
                 })
 
                 await Requests.findByIdAndUpdate({ _id: payment.requestId }, { isPaymentComplete: true })
                     .then((data) => {
-                        console.log('request data', data)
+                        // console.log('request data', data)
                     })
             }
 
@@ -87,12 +116,14 @@ exports.updatePayment = async (req, res, next) => {
                         errMessage: "payment does not exists"
                     }
                 })
+            console.log("updated")
             return res.status(201).json({
                 message: 'payments data updated successfully',
                 payload: payment
             })
 
         }).catch((err) => {
+            console.log('err', err)
             return res.status(404).json({
                 error: {
                     errCode: ERRORS.SOMETHING_WRONG,

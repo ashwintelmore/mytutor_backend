@@ -1,4 +1,5 @@
 const mongoose = require('mongoose');
+const Notification = require('./Notification');
 
 
 const paymentSchema = new mongoose.Schema({
@@ -48,10 +49,33 @@ const paymentSchema = new mongoose.Schema({
         type: String,
         default: '',
     },
+    image: {
+        data: {
+            type: Buffer,
+            default: []
+        },
+        contentType: {
+            type: String,
+            default: ''
+        },
+    }
 }
     , {
         timestamps: true
     });
+
+
+
+paymentSchema.post(['updateOne', 'findOneAndUpdate'], async function (doc) {
+    console.log(this.getFilter());
+    console.log('doc', doc)
+    // let noti = {
+    //     recieverId:doc.
+    // }
+    // Notification()
+    // await mongoose.model('Notification').
+
+});
 
 module.exports = mongoose.model('Payment', paymentSchema);
 

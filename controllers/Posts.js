@@ -123,7 +123,7 @@ exports.deletePost = async (req, res, next) => {
 
     const postId = req.params.id
 
-
+    console.log('req.params', req.params)
     const isE = isEmpty(postId);
     if (isE)
         return res.status(200).json(isE);
