@@ -21,6 +21,7 @@ const Requests = require('./routes/Request')
 const Meetings = require('./routes/Meetings')
 const Favourites = require('./routes/Favourites')
 const Payments = require('./routes/Payments')
+const Notifications = require('./routes/Notifications')
 
 //middleware
 
@@ -40,7 +41,6 @@ const connect = async () => {
 };
 
 
-
 //routes
 app.get('/', (req, res) => [
     res.status(200).json({
@@ -55,7 +55,7 @@ app.use('/api', Requests)
 app.use('/api', Meetings)
 app.use('/api', Favourites)
 app.use('/api', Payments)
-
+app.use('/api', Notifications)
 
 //port
 

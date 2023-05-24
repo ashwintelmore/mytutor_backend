@@ -55,7 +55,12 @@ exports.createRequest = async (req, res) => {
     const newReq = new Requests(payload)
 
 
+
     return await newReq.save().then(async (data) => {
+
+
+        //send notification to the tutor that he have received request
+
 
         res.status(201).json({
             message: 'Request created successfully',
@@ -91,6 +96,12 @@ exports.updateRequest = async (req, res, next) => {
         id,
         { ...payload },
         { new: true }).then((request) => {
+
+
+            //learner cancel =>
+            //tutor accept or reject
+
+
             if (!request)
                 return res.status(404).json({
                     error: {
@@ -189,6 +200,11 @@ exports.getAllPostAndRequestedReq = async (req, res, next) => {
 
     try {
         const reqs = await Requests.find({ requestedId: requestedId, postId: postId, cancelStatus: false })
+            .populate('requesterId')
+            .populate('requestedId')
+            .populate('postId')
+            .populate('meetingId')
+            .populate('paymentId')
 
         if (!reqs)
             return res.status(404).json({
@@ -221,6 +237,11 @@ exports.getAllPostAndRequesterReq = async (req, res, next) => {
 
     try {
         const reqs = await Requests.find({ requesterId: requesterId, postId: postId, cancelStatus: false })
+            .populate('requesterId')
+            .populate('requestedId')
+            .populate('postId')
+            .populate('meetingId')
+            .populate('paymentId')
 
         if (!reqs)
             return res.status(404).json({

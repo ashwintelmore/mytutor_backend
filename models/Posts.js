@@ -115,18 +115,19 @@ const postSchema = new mongoose.Schema({
 
 
 
-// vehicleSchema.pre('deleteOne', async function (next) {
+postSchema.pre('deleteOne', async function (next) {
 
-//     const vehicleId = this.getQuery()["_id"];
+    const id = this.getQuery()["_id"];
 
-//     console.log('vehicleId', vehicleId)
-//     try {
-//         await mongoose.model('Ride').deleteMany({ vehicleId: vehicleId })
-//     } catch (error) {
-//         console.log('error pre vehicle', error)
-//     }
-//     next()
-// })
+    console.log('id', id)
+    try {
+        await mongoose.model('Request').deleteMany({ postId: id })
+        await mongoose.model('Payment').deleteMany({ postId: id })
+    } catch (error) {
+        console.log('error pre post', error)
+    }
+    next()
+})
 
 
 module.exports = mongoose.model('Post', postSchema);

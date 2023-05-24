@@ -9,8 +9,29 @@ const notificationSchema = new mongoose.Schema({
         type: mongoose.Schema.Types.ObjectId,
         ref: 'UserDetails'
     },
+    requestId: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'Request',
+        default: null
+    },
+    paymentId: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'Payment',
+        default: null
+    },
+    postId: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'Post',
+        default: null
+    },
     type: {
         type: String,
+        enum: ['request', 'canceled', 'normal', 'accepted', 'payment', 'favourite'],
+        default: 'normal'
+    },
+    extraInfo: {
+        type: Object,
+        default: {}
     },
     message: {
         type: String,

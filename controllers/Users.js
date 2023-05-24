@@ -3,7 +3,32 @@ const { isEmpty, isInalidMongoDBid } = require("../helper/helper");
 const UserDetails = require("../models/UserDetails")
 
 
+// const transporter = nodemailer.createTransport({
+//     service: 'gmail',
+//     auth: {
+//         user: secure_configuration.EMAIL_USERNAME,
+//         pass: secure_configuration.PASSWORD
+//     }
+// });
 
+// const mailConfigurations = {
+
+//     // It should be a string of sender/server email
+//     from: 'mrtwinklesharma@gmail.com',
+
+//     to: 'smtwinkle451@gmail.com',
+
+//     // Subject of Email
+//     subject: 'Email Verification',
+
+//     // This would be the text of email body
+//     text: `Hi! There, You have recently visited 
+//            our website and entered your email.
+//            Please follow the given link to verify your email
+//            http://localhost:3000/verify/${token} 
+//            Thanks`
+
+// };
 
 exports.register = async (req, res, next) => {
     const { name, email, password } = req.body;
@@ -11,6 +36,18 @@ exports.register = async (req, res, next) => {
     const isE = isEmpty(name, email, password);
     if (isE)
         return res.status(200).json(isE);
+
+
+
+    // transporter.sendMail(mailConfigurations, function (error, info) {
+    //     if (error) throw Error(error);
+    //     console.log('Email Sent Successfully');
+    //     console.log(info);
+    // });
+
+
+
+    return
 
     try {
         const user = await UserDetails.findOne({ email: email })
