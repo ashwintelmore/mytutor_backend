@@ -135,6 +135,7 @@ exports.getAllRequesterReqs = async (req, res, next) => {
             .populate('postId')
             .populate('meetingId')
             .populate('paymentId')
+            .sort({ createdAt: -1 })
         if (!reqs)
             return res.status(404).json({
                 error: {
@@ -169,6 +170,7 @@ exports.getAllRequestedReqs = async (req, res, next) => {
             .populate('postId')
             .populate('meetingId')
             .populate('paymentId')
+            .sort({ createdAt: -1 })
         if (!reqs)
             return res.status(404).json({
                 error: {
@@ -205,7 +207,7 @@ exports.getAllPostAndRequestedReq = async (req, res, next) => {
             .populate('postId')
             .populate('meetingId')
             .populate('paymentId')
-
+            .sort({ createdAt: -1 })
         if (!reqs)
             return res.status(404).json({
                 error: {
@@ -242,7 +244,7 @@ exports.getAllPostAndRequesterReq = async (req, res, next) => {
             .populate('postId')
             .populate('meetingId')
             .populate('paymentId')
-
+            .sort({ createdAt: -1 })
         if (!reqs)
             return res.status(404).json({
                 error: {

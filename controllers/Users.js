@@ -222,7 +222,7 @@ exports.verifyEmail = async (req, res) => {
 };
 
 exports.forgetPassword = async (req, res, next) => {
-    const { email } = req.body;
+    const { email, } = req.body;
 
     console.log('req.body', req.body)
     const isE = isEmpty(email);
@@ -239,17 +239,16 @@ exports.forgetPassword = async (req, res, next) => {
                 }
             })
         if (user) {
-
             try {
                 let info = await transporter.sendMail({
                     from: `MyTutor ${SENDER_GMAIL}`, // sender address
-                    to: `${email} , ${SENDER_GMAIL}`, // list of receivers
-                    subject: "Verify email ✔", // Subject line
-                    text: `Hi! There, You have recently visited 
-                        our website and entered your email.
-                        Please follow the given link to verify your email
-                        ${FRONTEND_END_POINT}/${email}/${token} 
-                        Thanks`, // html body
+                    to: `${email} , ${SENDER_GMAIL}`,
+                    subject: "Hello , Here is your credential ✔", // Subject line
+                    html: `Hi! There, Here is your credential
+                    <br>
+                    <b>Email : </b> ${user.email} <br>
+                    <b>Password : </b> ${user.password} 
+                    <br><br>Thanks`, // html body
                 });
                 return res.status(201).json({
                     message: 'Password mail sended successfully',

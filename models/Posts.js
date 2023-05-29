@@ -123,6 +123,7 @@ postSchema.pre('deleteOne', async function (next) {
     try {
         await mongoose.model('Request').deleteMany({ postId: id })
         await mongoose.model('Payment').deleteMany({ postId: id })
+        await mongoose.model('Notification').deleteMany({ postId: id })
     } catch (error) {
         console.log('error pre post', error)
     }

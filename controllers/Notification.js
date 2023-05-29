@@ -7,6 +7,10 @@ const Meetings = require('../models/Meeting');
 const UserDetails = require('../models/UserDetails');
 const multer = require('multer');
 
+const FRONTEND_END_POINT = process.env.FRONTEND_END_POINT
+const SENDER_GMAIL = process.env.SENDER_GMAIL
+
+const transporter = require('../middlewares/SendMail')
 
 exports.createNotification = async (req, res) => {
     const {
@@ -23,6 +27,27 @@ exports.createNotification = async (req, res) => {
     const newData = new Notifications(payload)
 
     return await newData.save().then(async (data) => {
+
+        const user = await UserDetails.findById({ '_id': data.recieverId })
+
+        console.log('data', data)
+        console.log('user', user)
+        if (data.type === 'request' && data.message === 'REQUEST_ACCEPTED') {
+
+            console.log("sended mail ")
+
+            let info = await transporter.sendMail({
+                from: `MyTutor ${SENDER_GMAIL}`, // sender address
+                to: `${user.email} , ${SENDER_GMAIL}`,
+                subject: "Yeh! Your Request Accepted", // Subject line
+                html: `Hey! There, Your Request Accepted by tutor 
+                <br>
+                <b>check out now : </b> ${FRONTEND_END_POINT}/postcontent/${data.postId} <br>
+                <br><br>Thanks`, // html body
+            });
+        }
+
+
 
         res.status(201).json({
             message: 'Notification created successfully',
@@ -64,6 +89,42 @@ exports.updateNotification = async (req, res, next) => {
         id,
         { ...payload },
         { new: true }).then(async (data) => {
+
+            const user = await UserDetails.findById({ '_id': data.recieverId })
+
+            console.log('data', data)
+            console.log('user', user)
+            if (data.type === 'request' && data.message === 'REQUEST_ACCEPTED') {
+
+                console.log("sended mail ")
+
+                let info = await transporter.sendMail({
+                    from: `MyTutor ${SENDER_GMAIL}`, // sender address
+                    to: `${user.email} , ${SENDER_GMAIL}`,
+                    subject: "Yeh! Your Request Accepted", // Subject line
+                    html: `Hey! There, Your Request Accepted by tutor 
+                    <br>
+                    <b>check out now : </b> ${FRONTEND_END_POINT}/postcontent/${data.postId} <br>
+                    <br><br>Thanks`, // html body
+                });
+            } else if (data.type === 'request' && data.message === 'REQUEST_REJECTED') {
+
+                console.log("sended mail ")
+
+                let info = await transporter.sendMail({
+                    from: `MyTutor ${SENDER_GMAIL}`, // sender address
+                    to: `${user.email} , ${SENDER_GMAIL}`,
+                    subject: "Ohh! Your Request rejected", // Subject line
+                    html: `Hey! There, Your Request rejected by tutor 
+                    <br>
+                    <b>check out now : </b> ${FRONTEND_END_POINT}/postcontent/${data.postId} <br>
+                    <br><br>Thanks`, // html body
+                });
+            }
+
+
+
+
 
             return res.status(201).json({
                 message: 'Notifications data updated successfully',
